@@ -6,18 +6,20 @@
 
 namespace FrequentPatternMining
 {
-    ULL MAGIC = 0xabcdef;
+    ULL MAGIC = 0xabcdef;  # ULL for unsigned long long, unsigned代表不带符号，能表达的数字范围更大
     const int UNKNOWN_LABEL = -1000000000;
 
+    # 结构体(struct) 是由一系列具有相同类型或不同类型的数据构成的
+    # 数据集合。结构体是一种用户定义的数据类型，允许你将不同类型的数据项放在一起
     struct Pattern {
-        vector<TOKEN_ID_TYPE> tokens;
+        vector<TOKEN_ID_TYPE> tokens;  # 向量是一个封装了了动态大小数组的顺序容器。可以简单认为，向量是一个能够存放任意类型的动态数组
         int label;
         double probability, quality;
         ULL hashValue;
         TOKEN_ID_TYPE currentFreq;
 
-        void dump(FILE* out) {
-            Binary::write(out, currentFreq);
+        void dump(FILE* out) {  # dump的翻译是转储，是把动态的，容易丢失的数据转储为静态的形式
+            Binary::write(out, currentFreq);   
             Binary::write(out, quality);
             Binary::write(out, tokens.size());
             for (auto& token : tokens) {
@@ -25,7 +27,7 @@ namespace FrequentPatternMining
             }
         }
 
-        void load(FILE* in) {
+        void load(FILE* in) {  # 回去问阿创
             Binary::read(in, currentFreq);
             Binary::read(in, quality);
             size_t tokenSize;
@@ -57,18 +59,20 @@ namespace FrequentPatternMining
         }
 
         Pattern() {
-            tokens.clear();
+            tokens.clear();  # removes all elements from the vectors, leaving the container with a size of 0
             hashValue = 0;
             currentFreq = 0;
             label = UNKNOWN_LABEL;
             quality = 1;
         }
-
+        
+        # inline：内联函数，为了解决一些频繁调用的小函数大量解决消耗栈空间（栈内存）的问题
+        # inline只适合函数体内代码简单的函数使用，不能包含复杂的结构控制语句
         inline void shrink_to_fit() {
-            tokens.shrink_to_fit();
+            tokens.shrink_to_fit();   # 使容器的容量收缩到尽量等于元素的个数
         }
 
-        inline Pattern substr(int l, int r) const {
+        inline Pattern substr(int l, int r) const {  # substr: 返回一个新建的初始化为string对象的子串的拷贝string对象
             Pattern ret;
             for (int i = l; i < r; ++ i)  {
                 ret.append(tokens[i]);
